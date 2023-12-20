@@ -3,6 +3,12 @@ import validator from "validator";
 import bcrypt from "bcrypt";
 import type {TUser} from "../types/user.type"
 
+interface IUserMethods {
+  comparePassword(incomingPassword: string): boolean;
+}
+
+type UserModel = mongoose.Model<TUser, {}, IUserMethods>;
+
 const UserSchema = new mongoose.Schema<TUser>(
   {
     name: {
@@ -51,6 +57,12 @@ UserSchema.pre("save", async function(): Promise<void>{
   this.password = await bcrypt.hash(this.password, salt)
 })
 
-const User = mongoose.model<TUser>("User", UserSchema);
+UserSchema.methods.comparePassword = async function(incomingPassword: string): Promise<boolean>{
+  const isMatch =  await bcrypt.compare(incomingPassword, this.password)
+  return isMatch
+}
+
+
+const User = mongoose.model<TUser, UserModel>("User", UserSchema);
 
 export default User;
