@@ -8,7 +8,6 @@ export async function register(req: Request, res: Response) {
   const { name, email, password } = req.body;
 
   const userAlreadyExists = await User.findOne({ email });
-
   if (userAlreadyExists) {
     return res
       .status(StatusCodes.BAD_REQUEST)
@@ -16,6 +15,7 @@ export async function register(req: Request, res: Response) {
   }
 
   const verificationToken = "fake token";
+
   const user = await User.create({ name, email, password, verificationToken });
   await user.save();
   res
@@ -36,11 +36,12 @@ export async function login(req: Request, res: Response) {
   if (!user) {
     throw new CustomError.BadRequestError(`No user with email ${email} found`);
   }
-  const passwordMatches = user.comparePassword(password);
 
+  const passwordMatches = user.comparePassword(password);
   if (!passwordMatches) {
     throw new CustomError.BadRequestError("Password is incorrect");
   }
+
   if (!user.isVerified) {
     throw new CustomError.UnauthorizedError("Please verify your email");
   }
