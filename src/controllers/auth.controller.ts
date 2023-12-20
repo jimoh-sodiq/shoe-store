@@ -14,11 +14,13 @@ export async function register(req: Request, res: Response) {
       .json(createResponse(false, null, "Email already exists"));
   }
 
-  // const user = await User.create({name, email, password})
-  // await user.save()
+  const verificationToken = "fake token"
+
+  const user = await User.create({name, email, password, verificationToken})
+  await user.save()
   res
     .status(StatusCodes.CREATED)
-    .json(createResponse(true, { user: "" }, "user created successfully"));
+    .json(createResponse(true, { verificationToken: user.verificationToken }, "Success! Please check your email to verify your account"));
 }
 
 export async function login(req: Request, res: Response) {}
