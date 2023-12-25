@@ -1,9 +1,11 @@
 import { StatusCodes } from "http-status-codes";
 import type { Request, Response } from "express";
 import crypto from "crypto";
-import { createResponse } from "../utils/response.util";
-import { sendEmail } from "../utils/mailer.util";
 import User from "../models/user.model";
+import Token from "../models/token.model";
+import { createResponse } from "../utils/response.util";
+import { createTokenUser } from "../utils/user.util";
+import { sendEmail } from "../utils/mailer.util";
 import * as CustomError from "../errors";
 
 export async function register(req: Request, res: Response) {
@@ -78,9 +80,27 @@ export async function login(req: Request, res: Response) {
   if (!user.isVerified) {
     throw new CustomError.UnauthorizedError("Please verify your email");
   }
+  const tokenUser = createTokenUser(user);
+
+  // create refresh token
+  let refreshToken = "";
+  // check for existing token
+  refreshToken = crypto.randomBytes(40).toString("hex");
+  const userAgent = req.headers["user-agent"];
+  const ip = req.ip;
+  const token = await Token.create({
+    refreshToken,
+    ip,
+    userAgent,
+    user: user._id,
+  });
+  // attack cookie to response
+
   res
     .status(StatusCodes.OK)
-    .json(createResponse(true, { user }, "logged in successfully"));
+    .json(
+      createResponse(true, { user: tokenUser, token }, "logged in successfully")
+    );
 }
 
 export async function logout(req: Request, res: Response) {
