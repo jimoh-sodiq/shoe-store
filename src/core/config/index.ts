@@ -13,16 +13,11 @@ const globalConfig = {
   mongodb: {
     mongoUri: process.env.MONGO_URI,
   },
-  auth: {
-    saltRounds: process.env.SALT_ROUNDS,
-  },
-  email: {
-    gmail: {
-      host: process.env.EMAIL_HOST,
-      port: process.env.EMAIL_PORT,
-      username: process.env.EMAIL_USERNAME,
-      password: process.env.EMAIL_PASSWORD,
-    },
+  nodemailer: {
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    username: process.env.EMAIL_USERNAME,
+    password: process.env.EMAIL_PASSWORD,
   },
 };
 

@@ -20,10 +20,11 @@ export async function register(req: Request, res: Response) {
 
   const user = await User.create({ name, email, password, verificationToken });
 
+  // TODO: create an actual link gotten from the frontend
   await sendEmail({
-    to: email,
-    subject: "Email Verification Token",
-    html: `<h1>${verificationToken}</h1>`,
+    to: user.email,
+    subject: "Shoe Store Email Verification",
+    html: `<p>Hello ${user.name}, please verify your email address by clicking this link <a>${user.verificationToken}</a></p>`,
   });
 
   res

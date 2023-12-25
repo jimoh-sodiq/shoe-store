@@ -1,5 +1,4 @@
 import nodemailer from "nodemailer";
-import { Request, Response } from "express";
 import globalConfig from "../core/config";
 
 const transporter = nodemailer.createTransport({
@@ -7,8 +6,8 @@ const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   secure: false,
   auth: {
-    user: globalConfig.email.gmail.username,
-    pass: globalConfig.email.gmail.password,
+    user: globalConfig.nodemailer.username,
+    pass: globalConfig.nodemailer.password,
   },
 });
 
@@ -19,7 +18,7 @@ export async function sendEmail(mailOptions: {
 }) {
   try {
     await transporter.sendMail({
-      from: globalConfig.email.gmail.username,
+      from: globalConfig.nodemailer.username,
       to: mailOptions.to,
       subject: mailOptions.subject,
       html: mailOptions.html,
