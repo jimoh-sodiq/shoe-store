@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 import validator from "validator";
 import bcrypt from "bcrypt";
-import type {TUser} from "../types/user.type"
+import type { TUser } from "../types/user.type";
+import globalConfig from "../core/config";
 
 interface IUserMethods {
   comparePassword(incomingPassword: string): boolean;
@@ -47,21 +48,22 @@ const UserSchema = new mongoose.Schema<TUser>(
       type: Boolean,
       default: false,
     },
-    verifiedDate: Date
+    verifiedDate: Date,
   },
   { timestamps: true }
 );
 
-UserSchema.pre("save", async function(): Promise<void>{
+UserSchema.pre("save", async function (): Promise<void> {
   const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt)
-})
+  this.password = await bcrypt.hash(this.password, salt);
+});
 
-UserSchema.methods.comparePassword = async function(incomingPassword: string): Promise<boolean>{
-  const isMatch =  await bcrypt.compare(incomingPassword, this.password)
-  return isMatch
-}
-
+UserSchema.methods.comparePassword = async function (
+  incomingPassword: string
+): Promise<boolean> {
+  const isMatch = await bcrypt.compare(incomingPassword, this.password);
+  return isMatch;
+};
 
 const User = mongoose.model<TUser, UserModel>("User", UserSchema);
 

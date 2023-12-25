@@ -1,13 +1,10 @@
 import express from "express";
-import dotenv from "dotenv";
 import pino from "pino-http";
 import "express-async-errors";
-import ServerConnector from "./src/db";
+import ServerConnector from "./src/core/db";
 import authRouter from "./src/routes/auth.route";
 import notFoundMiddleware from "./src/middleware/notfound.middleware";
 import errorHandlerMiddleware from "./src/middleware/errorhandler.middleware";
-
-dotenv.config();
 
 const app = express();
 
@@ -32,6 +29,7 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Welcome");
 });
+
 
 app.use("/api/v1/auth", authRouter);
 // app.use("/api/v1/users", userRouter);

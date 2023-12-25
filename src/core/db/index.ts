@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 import type { Express } from "express";
+import globalConfig from '../config';
 
 export default class ServerConnector {
-  private url = process.env.MONGO_URI || ""
+  private url = globalConfig.mongodb.mongoUri || ""
 
-  private port = process.env.PORT || 4173;
-  
+  private port = globalConfig.port;
 
   private async connectDB() {
     return mongoose.connect(this.url);
