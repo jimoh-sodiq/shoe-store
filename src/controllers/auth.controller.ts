@@ -3,8 +3,11 @@ import type { Request, Response } from "express";
 import crypto from "crypto";
 import User from "../models/user.model";
 import Token from "../models/token.model";
-import { createResponse } from "../utils/response.util";
-import { createTokenUser } from "../utils/user.util";
+import {
+  createResponse,
+  attachCookiesToResponse,
+} from "../utils/response.util";
+import { createTokenUser } from "../utils/token.util";
 import { sendEmail } from "../utils/mailer.util";
 import * as CustomError from "../errors";
 
@@ -94,13 +97,12 @@ export async function login(req: Request, res: Response) {
     userAgent,
     user: user._id,
   });
-  // attack cookie to response
+
+  attachCookiesToResponse({ res, user: tokenUser, refreshToken });
 
   res
     .status(StatusCodes.OK)
-    .json(
-      createResponse(true, { user: tokenUser, token }, "logged in successfully")
-    );
+    .json(createResponse(true, { user: tokenUser }, "logged in successfully"));
 }
 
 export async function logout(req: Request, res: Response) {

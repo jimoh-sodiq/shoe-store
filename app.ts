@@ -5,6 +5,8 @@ import ServerConnector from "./src/core/db";
 import authRouter from "./src/routes/auth.route";
 import notFoundMiddleware from "./src/middleware/notfound.middleware";
 import errorHandlerMiddleware from "./src/middleware/errorhandler.middleware";
+import cookieParser from "cookie-parser";
+import globalConfig from "./src/core/config";
 
 const app = express();
 
@@ -22,14 +24,13 @@ app.use(
     },
   })
 );
-
 app.use(express.json());
+app.use(cookieParser(globalConfig.auth.jwtSecret));
 
 // health check
 app.get("/", (req, res) => {
   res.send("Welcome");
 });
-
 
 app.use("/api/v1/auth", authRouter);
 // app.use("/api/v1/users", userRouter);

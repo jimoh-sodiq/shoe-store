@@ -19,6 +19,10 @@ const globalConfig = {
     username: process.env.EMAIL_USERNAME,
     password: process.env.EMAIL_PASSWORD,
   },
+  auth: {
+    jwtSecret: process.env.JWT_SECRET,
+    jwtLifetime: process.env.JWT_LIFETIME,
+  }
 };
 
 export default globalConfig;
