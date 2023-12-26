@@ -20,16 +20,17 @@ export function attachCookiesToResponse(options: {
   refreshToken: string;
 }) {
   const { res, user, refreshToken } = options;
-  const accessTokenJWT = createJWT({user});
+  const accessTokenJWT = createJWT({ user });
   const refreshTokenJWT = createJWT({ user, refreshToken });
 
-  const oneMonth= 1000 * 24 * 60 * 60 * 30;
+  const oneMonth = 1000 * 24 * 60 * 60 * 30;
+  const oneDay = 1000 * 24 * 60 * 60;
 
   res.cookie("accessToken", accessTokenJWT, {
     httpOnly: process.env.NODE_ENV == "production",
     secure: process.env.NODE_ENV == "production",
+    expires: new Date(Date.now() + oneDay),
     signed: true,
-    maxAge: 1000 * 24 * 60 * 60, // one day
   });
   res.cookie("refreshToken", refreshTokenJWT, {
     httpOnly: process.env.NODE_ENV == "production",
