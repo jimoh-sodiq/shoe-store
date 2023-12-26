@@ -10,6 +10,7 @@ import {
 import { createTokenUser } from "../utils/token.util";
 import { sendEmail } from "../utils/mailer.util";
 import * as CustomError from "../errors";
+import { RequestWithUser } from "../types/request.type";
 
 export async function register(req: Request, res: Response) {
   const { name, email, password } = req.body;
@@ -121,6 +122,16 @@ export async function login(req: Request, res: Response) {
 }
 
 export async function logout(req: Request, res: Response) {
-  console.log("logging out in the name of the things");
-  res.send("Done");
+  await Token.findOneAndDelete({ user: (req as RequestWithUser).user.userId });
+  res.cookie("accessToken", "logout", {
+    httpOnly: true,
+    expires: new Date(Date.now()),
+  });
+  res.cookie("refreshToken", "logout", {
+    httpOnly: true,
+    expires: new Date(Date.now()),
+  });
+  res
+    .status(StatusCodes.OK)
+    .json(createResponse(true, null, "Logged out successfully"));
 }
