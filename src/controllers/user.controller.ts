@@ -91,3 +91,34 @@ export async function updateUser(req: Request, res: Response) {
       )
     );
 }
+
+export async function updateUserPassword(req: Request, res: Response) {
+  const { oldPassword, newPassword } = req.body;
+  if (!oldPassword || !newPassword) {
+    throw new CustomError.BadRequestError(
+      "Please provide old and new password"
+    );
+  }
+  if (oldPassword === newPassword) {
+    throw new CustomError.BadRequestError(
+      "New password cannot be the same as old password"
+    );
+  }
+  const user = await User.findOne({
+    _id: (req as RequestWithUser).user.userId,
+  });
+
+  if (!user) {
+    throw new CustomError.NotFoundError("User not found");
+  }
+  const isPasswordCorrect = await user.comparePassword(oldPassword);
+
+  if (!isPasswordCorrect) {
+    throw new CustomError.BadRequestError("Incorrect password");
+  }
+  user.password = newPassword;
+  await user.save();
+  res
+    .status(StatusCodes.OK)
+    .json(createResponse(true, {}, "password updated successfully"));
+}
