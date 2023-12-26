@@ -20,22 +20,21 @@ export function attachCookiesToResponse(options: {
   refreshToken: string;
 }) {
   const { res, user, refreshToken } = options;
-  const accessTokenJWT = createJWT({ payload: user });
-  const refreshTokenJWT = createJWT({ payload: { user, refreshToken } });
+  const accessTokenJWT = createJWT({user});
+  const refreshTokenJWT = createJWT({ user, refreshToken });
 
-  const oneDay = 1000 * 24 * 60 * 60
+  const oneMonth= 1000 * 24 * 60 * 60 * 30;
 
   res.cookie("accessToken", accessTokenJWT, {
     httpOnly: process.env.NODE_ENV == "production",
     secure: process.env.NODE_ENV == "production",
     signed: true,
-    maxAge: 1000
+    maxAge: 1000 * 24 * 60 * 60, // one day
   });
   res.cookie("refreshToken", refreshTokenJWT, {
     httpOnly: process.env.NODE_ENV == "production",
     secure: process.env.NODE_ENV == "production",
-    expires: new Date(Date.now() + oneDay),
+    expires: new Date(Date.now() + oneMonth),
     signed: true,
-    maxAge: 1000
   });
 }

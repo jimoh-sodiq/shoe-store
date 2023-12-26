@@ -2,11 +2,12 @@ import express from "express";
 import pino from "pino-http";
 import "express-async-errors";
 import ServerConnector from "./src/core/db";
-import authRouter from "./src/routes/auth.route";
 import notFoundMiddleware from "./src/middleware/notfound.middleware";
 import errorHandlerMiddleware from "./src/middleware/errorhandler.middleware";
 import cookieParser from "cookie-parser";
 import globalConfig from "./src/core/config";
+import authRouter from "./src/routes/auth.route";
+import userRouter from "./src/routes/user.route";
 
 const app = express();
 
@@ -33,7 +34,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/auth", authRouter);
-// app.use("/api/v1/users", userRouter);
+app.use("/api/v1/users", userRouter);
 // app.use("/api/v1/products", productRouter);
 // app.use("/api/v1/reviews", reviewRouter);
 // app.use("/api/v1/orders", orderRouter);

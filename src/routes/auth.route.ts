@@ -4,8 +4,8 @@ import { register, login, logout, verifyEmail } from "../controllers/auth.contro
 const router = express.Router();
 
 router.route("/register").post(register);
+router.route("/verify-email").post(verifyEmail);
 router.route("/login").post(login);
 router.route("/logout").get(logout);
-router.route("/verify-email").post(verifyEmail);
 
 export default router;

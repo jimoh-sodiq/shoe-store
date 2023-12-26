@@ -85,13 +85,28 @@ export async function login(req: Request, res: Response) {
   }
   const tokenUser = createTokenUser(user);
 
-  // create refresh token
   let refreshToken = "";
-  // check for existing token
+  const existingToken = await Token.findOne({ user: user._id });
+  if (existingToken) {
+    const { isValid } = existingToken;
+    if (!isValid) {
+      throw new CustomError.UnauthenticatedError("Invalid credentials");
+    }
+    refreshToken = existingToken.refreshToken;
+    attachCookiesToResponse({ res, user: tokenUser, refreshToken });
+
+    res
+      .status(StatusCodes.OK)
+      .json(
+        createResponse(true, { user: tokenUser }, "logged in successfully")
+      );
+    return;
+  }
+
   refreshToken = crypto.randomBytes(40).toString("hex");
   const userAgent = req.headers["user-agent"];
   const ip = req.ip;
-  const token = await Token.create({
+  await Token.create({
     refreshToken,
     ip,
     userAgent,
