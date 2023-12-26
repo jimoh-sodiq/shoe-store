@@ -7,7 +7,7 @@ import {
   createResponse,
   attachCookiesToResponse,
 } from "../utils/response.util";
-import { createTokenUser } from "../utils/token.util";
+import { createTokenUser, createHashedString } from "../utils/token.util";
 import { sendEmail } from "../utils/mailer.util";
 import * as CustomError from "../errors";
 import { RequestWithUser } from "../types/request.type";
@@ -148,7 +148,7 @@ export async function forgotPassword(req: Request, res: Response) {
     const passwordToken = crypto.randomBytes(70).toString("hex");
     const thirtyMinutes = 1000 * 60 * 30;
     const passwordTokenExpirationDate = new Date(Date.now() + thirtyMinutes);
-    user.passwordToken = passwordToken;
+    user.passwordToken = createHashedString(passwordToken);
     user.passwordTokenExpirationDate = passwordTokenExpirationDate;
     await user.save();
 
@@ -181,12 +181,15 @@ export async function resetPassword(req: Request, res: Response) {
   if (user) {
     const currentDate = new Date();
 
-    if (user.passwordTokenExpirationDate && currentDate > user.passwordTokenExpirationDate) {
+    if (
+      user.passwordTokenExpirationDate &&
+      currentDate > user.passwordTokenExpirationDate
+    ) {
       throw new CustomError.BadRequestError(
         "Password token has expired, please visit the forgot password page and try again"
       );
     }
-    if (user.passwordToken == passwordToken) {
+    if (user.passwordToken == createHashedString(passwordToken)) {
       user.password = password;
       user.passwordToken = undefined;
       user.passwordTokenExpirationDate = undefined;

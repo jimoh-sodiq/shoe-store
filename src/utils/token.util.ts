@@ -1,4 +1,4 @@
-import { Response } from "express";
+import crypto from 'crypto';
 import jwt from "jsonwebtoken";
 import { HydratedDocument } from "mongoose";
 import type { TUser, TTokenUser } from "../types/user.type";
@@ -15,4 +15,9 @@ export function createJWT(payload : any) {
 
 export function isTokenValid(token: string) {
   return jwt.verify(token, globalConfig.auth.jwtSecret as string);
+}
+
+
+export function createHashedString(value: string) {
+  return crypto.createHash('md5').update(value).digest('hex')
 }
