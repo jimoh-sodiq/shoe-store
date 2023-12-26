@@ -8,6 +8,8 @@ export type TUser = {
   verificationToken: string;
   isVerified: boolean;
   verifiedDate: Date;
+  passwordToken?: string;
+  passwordTokenExpirationDate?: Date;
 };
 
 export type TTokenUser = {

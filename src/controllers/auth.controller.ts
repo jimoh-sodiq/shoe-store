@@ -76,7 +76,7 @@ export async function login(req: Request, res: Response) {
     throw new CustomError.BadRequestError(`No user with email ${email} found`);
   }
 
-  const passwordMatches = user.comparePassword(password);
+  const passwordMatches = await user.comparePassword(password);
   if (!passwordMatches) {
     throw new CustomError.BadRequestError("Password is incorrect");
   }
@@ -134,4 +134,67 @@ export async function logout(req: Request, res: Response) {
   res
     .status(StatusCodes.OK)
     .json(createResponse(true, null, "Logged out successfully"));
+}
+
+export async function forgotPassword(req: Request, res: Response) {
+  const { email } = req.body;
+  if (email) {
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new CustomError.BadRequestError(
+        `No user with email ${email} found`
+      );
+    }
+    const passwordToken = crypto.randomBytes(70).toString("hex");
+    const thirtyMinutes = 1000 * 60 * 30;
+    const passwordTokenExpirationDate = new Date(Date.now() + thirtyMinutes);
+    user.passwordToken = passwordToken;
+    user.passwordTokenExpirationDate = passwordTokenExpirationDate;
+    await user.save();
+
+    await sendEmail({
+      to: user.email,
+      subject: "Shoe Store Password Reset",
+      html: `<p>Hello ${user.name}, please reset your password by clicking this link <a>${user.passwordToken}</a></p>`,
+    });
+  }
+
+  res
+    .status(StatusCodes.OK)
+    .json(
+      createResponse(
+        true,
+        null,
+        "Success! Please check your email to reset your password using the password reset link"
+      )
+    );
+}
+
+export async function resetPassword(req: Request, res: Response) {
+  const { passwordToken, password, email } = req.body;
+  if (!passwordToken || !password || !email) {
+    throw new CustomError.BadRequestError(
+      "Please provide passwordToken, password and email"
+    );
+  }
+  const user = await User.findOne({ email });
+  if (user) {
+    const currentDate = new Date();
+
+    if (user.passwordTokenExpirationDate && currentDate > user.passwordTokenExpirationDate) {
+      throw new CustomError.BadRequestError(
+        "Password token has expired, please visit the forgot password page and try again"
+      );
+    }
+    if (user.passwordToken == passwordToken) {
+      user.password = password;
+      user.passwordToken = undefined;
+      user.passwordTokenExpirationDate = undefined;
+    }
+
+    await user.save();
+  }
+  res
+    .status(StatusCodes.OK)
+    .json(createResponse(true, null, "Password reset successfully"));
 }

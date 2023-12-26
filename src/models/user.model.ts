@@ -5,7 +5,7 @@ import type { TUser } from "../types/user.type";
 import globalConfig from "../core/config";
 
 interface IUserMethods {
-  comparePassword(incomingPassword: string): boolean;
+  comparePassword(incomingPassword: string): Promise<boolean>;
 }
 
 type UserModel = mongoose.Model<TUser, {}, IUserMethods>;
@@ -49,6 +49,8 @@ const UserSchema = new mongoose.Schema<TUser>(
       default: false,
     },
     verifiedDate: Date,
+    passwordToken: String,
+    passwordTokenExpirationDate: Date,
   },
   { timestamps: true }
 );
