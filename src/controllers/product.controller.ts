@@ -1,6 +1,7 @@
 import Product from "../models/product.model";
 import { StatusCodes } from "http-status-codes";
 import type { Request, Response } from "express";
+import fs from "fs";
 import {
   createResponse,
   attachCookiesToResponse,
@@ -20,7 +21,13 @@ export async function getAllProducts(req: Request, res: Response) {
   const products = await Product.find({});
   return res
     .status(StatusCodes.OK)
-    .json(createResponse(true, { products, count: products.length }, "Products fetched successfully"));
+    .json(
+      createResponse(
+        true,
+        { products, count: products.length },
+        "Products fetched successfully"
+      )
+    );
 }
 
 export async function getSingleProduct(req: Request, res: Response) {
@@ -67,5 +74,14 @@ export async function deleteProduct(req: Request, res: Response) {
 }
 
 export async function uploadImage(req: Request, res: Response) {
+//   console.log("file", req.files);
+  const files = req.files;
+  if (!files?.length) {
+    throw new CustomError.BadRequestError("No file uploaded");
+  }
+  (files as Express.Multer.File[]).forEach((file: Express.Multer.File) => {
+    console.log('tag', file.originalname)
+    const filePath = `../public/uploads/${file.filename}`
+  });
   return res.send("uploadImage");
 }

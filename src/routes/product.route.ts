@@ -11,6 +11,7 @@ import {
   authenticateUser,
   authorizePermissions,
 } from "../middleware/authentication.middleware";
+import upload from "../middleware/uploader.middleware";
 
 const router = express.Router();
 
@@ -21,7 +22,12 @@ router
 
 router
   .route("/upload-image")
-  .post(authenticateUser, authorizePermissions("admin"), uploadImage);
+  .post(
+    authenticateUser,
+    authorizePermissions("user"),
+    upload.array("productImages", 7),
+    uploadImage
+  );
 
 router
   .route("/:id")
