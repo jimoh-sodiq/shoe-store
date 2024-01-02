@@ -67,11 +67,20 @@ const ProductSchema = new mongoose.Schema<TProduct>(
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
+ProductSchema.virtual("reviews", {
+  ref: "Review",
+  localField: "_id",
+  foreignField: "product",
+});
 
-ProductSchema.pre("deleteOne", async function(){
-  console.log("Deleted this product")
-})
+ProductSchema.pre(
+  "deleteOne",
+  { document: true, query: false },
+  async function () {
+    await this.model("Review").deleteMany({ product: this._id });
+  }
+);
 
-const Product = mongoose.model("Product", ProductSchema);
+const Product = mongoose.model(" Product", ProductSchema);
 
 export default Product;

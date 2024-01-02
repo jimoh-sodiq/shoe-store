@@ -9,10 +9,14 @@ import globalConfig from "./src/core/config";
 import authRouter from "./src/routes/auth.route";
 import userRouter from "./src/routes/user.route";
 import productRouter from "./src/routes/product.route";
-
+import {v2 as cloudinary} from 'cloudinary';
 
 const app = express();
-
+cloudinary.config({ 
+  cloud_name: globalConfig.cloudinary.cloudName, 
+  api_key: globalConfig.cloudinary.apiKey, 
+  api_secret: globalConfig.cloudinary.apiSecret 
+});
 // logger
 app.use(
   pino({
@@ -27,6 +31,7 @@ app.use(
     },
   })
 );
+app.use(express.static("./src/public"));
 app.use(express.json());
 app.use(cookieParser(globalConfig.auth.jwtSecret));
 
