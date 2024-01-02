@@ -18,7 +18,7 @@ const router = express.Router();
 router
   .route("/")
   .get(getAllProducts)
-  .post(authenticateUser, authorizePermissions("admin"), createProduct);
+  .post(authenticateUser, authorizePermissions("user"), createProduct);
 
 router
   .route("/upload-image")

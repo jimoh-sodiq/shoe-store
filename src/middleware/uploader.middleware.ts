@@ -1,14 +1,15 @@
 import multer from "multer";
 import { FileFilterCallback } from "multer";
 import * as CustomError from "../errors";
+import path from "path";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "../public/uploads/");
+    cb(null, path.join(__dirname, "../public/uploads/"));
   },
   filename: (req, file, cb) => {
     cb(null, file.originalname);
-  }
+  },
 });
 
 const fileFilter = (
@@ -37,6 +38,6 @@ const fileFilter = (
   cb(null, true);
 };
 
-const uploader = multer({ storage, fileFilter });
+const uploader = multer({ fileFilter, storage });
 
 export default uploader;

@@ -23,8 +23,6 @@ const ProductSchema = new mongoose.Schema<TProduct>(
     images: {
       type: [String],
       required: [true, "Product image is required"],
-      default: [],
-      minlength: [4, "A minimum of 4 Product images is required"],
     },
     category: {
       type: String,

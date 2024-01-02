@@ -5,7 +5,7 @@ export type TOrder =  {
     shippingFee: number;
     subTotal:  number;
     total: number;
-    orderItems: Array<TSingleOrderItem>
+    orderItems: Types.DocumentArray<TSingleOrderItem>
     status: 'pending' | 'paid' | 'shipped' | 'delivered' | 'failed' | 'cancelled'
     user: Types.ObjectId;
     clientSecret: string;
@@ -14,7 +14,7 @@ export type TOrder =  {
 
 export type TSingleOrderItem = {
     name: string;
-    images: Array<string>;
+    images: Types.Array<string>;
     price: number;
     quantity: number;
     product :Types.ObjectId;

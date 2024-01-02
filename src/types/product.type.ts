@@ -4,11 +4,11 @@ export type TProduct = {
   name: string;
   description: string;
   price: number;
-  images: Array<string>;
+  images: Types.Array<string>;
   category: "men" | "women" | "kids" | "unisex";
-  colors: Array<string>;
+  colors: Types.Array<string>;
   brand: string;
-  sizes: Array<number>
+  sizes: Types.Array<number>
   featured?: boolean;
   freeShipping?: boolean;
   inventory: number;
