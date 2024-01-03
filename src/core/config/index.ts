@@ -27,7 +27,10 @@ const globalConfig = {
     cloudName: process.env.CLOUDINARY_CLOUD_NAME,
     apiKey: process.env.CLOUDINARY_API_KEY,
     apiSecret: process.env.CLOUDINARY_API_SECRET,
-  }
+  },
+  stripe: {
+    testApiKey: process.env.STRIPE_TEST_API_KEY,
+  },
 };
 
 export default globalConfig;

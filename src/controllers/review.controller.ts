@@ -58,7 +58,6 @@ export async function updateReview(req: Request, res: Response) {
   const { rating, comment, title } = req.body;
   const reviewId = req.params.id;
   const review = await Review.findOne({ _id: reviewId });
-  console.log(review);
   if (!review) {
     throw new CustomError.NotFoundError("review not found");
   }
@@ -72,7 +71,7 @@ export async function updateReview(req: Request, res: Response) {
     .json(createResponse(true, { review }, "review updated successfully"));
 }
 
-export async function deleteReview(req, res) {
+export async function deleteReview(req: Request, res: Response) {
   const reviewId = req.params.id;
   const review = await Review.findOne({ _id: reviewId });
   if (!review) {

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { TReview } from "../types/review.type";
 
 interface ReviewModel extends mongoose.Model<TReview> {
-  calculateAverageRating(): unknown;
+  calculateAverageRating(): any;
 }
 
 const ReviewSchema = new mongoose.Schema<TReview, ReviewModel>(
@@ -74,14 +74,14 @@ ReviewSchema.statics.calculateAverageRating = async function (productId) {
   }
 };
 
-ReviewSchema.post("save", async function (next) {
-  await this.constructor.calculateAverageRating(this.product);
+ReviewSchema.post("save", async function () {
+  await this.calculateAverageRating(this.product);
 });
 
 ReviewSchema.post(
   "deleteOne",
   { document: true, query: false },
-  async function (next) {
+  async function () {
     await this.constructor.calculateAverageRating(this.product);
   }
 );

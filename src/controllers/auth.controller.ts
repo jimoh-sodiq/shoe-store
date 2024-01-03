@@ -30,7 +30,7 @@ export async function register(req: Request, res: Response) {
   await sendEmail({
     to: user.email,
     subject: "Shoe Store Email Verification",
-    html: `<p>Hello ${user.name}, please verify your email address by clicking this link <a>${user.verificationToken}</a></p>`,
+    html: `<p>Hello ${user.name}, please verify your email address by clicking this link <a href="">here</a></p>`,
   });
 
   res

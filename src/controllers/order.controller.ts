@@ -11,6 +11,11 @@ import * as CustomError from "../errors";
 import { RequestWithUser } from "../types/request.type";
 import { TSingleOrderItem, TOrder } from "../types/order.type";
 import { confirmOwnership } from "../utils/user.util";
+import Stripe from "stripe";
+import globalConfig from "../core/config";
+import crypto from "crypto";
+
+// const stripe = new Stripe(globalConfig.stripe.testApiKey as string);
 
 const fakeStripeApi = async ({
   amount,
@@ -19,8 +24,8 @@ const fakeStripeApi = async ({
   amount: number;
   currency: string;
 }) => {
-  const clientSecret = "arandomclientsecret";
-  return { clientSecret, amount };
+  const client_secret = crypto.randomBytes(20).toString("hex");
+  return { client_secret, amount };
 };
 
 export async function createOrder(req: Request, res: Response) {
@@ -58,15 +63,19 @@ export async function createOrder(req: Request, res: Response) {
 
   subTotal = revampOrderItems.reduce((acc, curr) => {
     return (acc += curr.price * curr.quantity);
-    console.log(subTotal);
   }, 0);
   const total = subTotal + tax + shippingFee;
 
   //   GET CLIENT SECRET
+  // const paymentIntent = await stripe.paymentIntents.create({
+  //   amount: total,
+  //   currency: "NGN",
+  // });
   const paymentIntent = await fakeStripeApi({
     amount: total,
     currency: "NGN",
   });
+  console.log(paymentIntent);
   const order = await Order.create({
     tax,
     shippingFee,
@@ -74,7 +83,7 @@ export async function createOrder(req: Request, res: Response) {
     total,
     orderItems: revampOrderItems,
     user: (req as RequestWithUser).user.userId,
-    clientSecret: paymentIntent.clientSecret,
+    clientSecret: paymentIntent.client_secret,
   });
 
   res
