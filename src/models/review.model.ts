@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 import { TReview } from "../types/review.type";
+import Product from "./product.model";
 
 interface ReviewModel extends mongoose.Model<TReview> {
-  calculateAverageRating(): any;
+  calculateAverageRating(productId: mongoose.Types.ObjectId): any;
 }
 
 const ReviewSchema = new mongoose.Schema<TReview, ReviewModel>(
@@ -62,7 +63,7 @@ ReviewSchema.statics.calculateAverageRating = async function (productId) {
   ]);
 
   try {
-    await this.model("Product").findOneAndUpdate(
+    await Product.findOneAndUpdate(
       { _id: productId },
       {
         averageRating: Math.ceil(aggregateResult[0]?.averageRating || 0),
@@ -75,17 +76,17 @@ ReviewSchema.statics.calculateAverageRating = async function (productId) {
 };
 
 ReviewSchema.post("save", async function () {
-  await this.calculateAverageRating(this.product);
+  await Review.calculateAverageRating(this.product);
 });
 
 ReviewSchema.post(
   "deleteOne",
   { document: true, query: false },
   async function () {
-    await this.constructor.calculateAverageRating(this.product);
+    await Review.calculateAverageRating(this.product);
   }
 );
 
-const Review = mongoose.model("Review", ReviewSchema);
+const Review = mongoose.model<TReview, ReviewModel>("Review", ReviewSchema);
 
 export default Review;
