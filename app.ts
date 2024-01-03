@@ -11,13 +11,14 @@ import userRouter from "./src/routes/user.route";
 import orderRouter from "./src/routes/order.route";
 import reviewRouter from "./src/routes/review.route";
 import productRouter from "./src/routes/product.route";
-import {v2 as cloudinary} from 'cloudinary';
+import { v2 as cloudinary } from "cloudinary";
+import { sendEmail } from "./src/utils/mailer.util";
 
 const app = express();
-cloudinary.config({ 
-  cloud_name: globalConfig.cloudinary.cloudName, 
-  api_key: globalConfig.cloudinary.apiKey, 
-  api_secret: globalConfig.cloudinary.apiSecret 
+cloudinary.config({
+  cloud_name: globalConfig.cloudinary.cloudName,
+  api_key: globalConfig.cloudinary.apiKey,
+  api_secret: globalConfig.cloudinary.apiSecret,
 });
 // logger
 app.use(
