@@ -12,7 +12,10 @@ import orderRouter from "./src/routes/order.route";
 import reviewRouter from "./src/routes/review.route";
 import productRouter from "./src/routes/product.route";
 import { v2 as cloudinary } from "cloudinary";
-import { sendEmail } from "./src/utils/mailer.util";
+import mongoSanitize from "express-mongo-sanitize";
+import helmet from "helmet"
+import cors from "cors"
+
 
 const app = express();
 cloudinary.config({
@@ -34,9 +37,13 @@ app.use(
     },
   })
 );
+
+app.use(helmet())
+app.use(mongoSanitize())
 app.use(express.static("./src/public"));
 app.use(express.json());
 app.use(cookieParser(globalConfig.auth.jwtSecret));
+app.use(cors())
 
 // health check
 app.get("/", (req, res) => {
