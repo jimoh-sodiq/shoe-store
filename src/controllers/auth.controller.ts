@@ -30,7 +30,7 @@ export async function register(req: Request, res: Response) {
   await sendEmail({
     to: user.email,
     subject: "Shoe Store Email Verification",
-    html: `<p>Hello ${user.name}, please verify your email address by clicking this link <a href='https://jshoes.netlify.app/auth/verify-email/${verificationToken}' target='_blank'>HERE</a></p>`,
+    html: `<p>Hello ${user.name}, please verify your email address by clicking this link <a href='https://jshoes.netlify.app/auth/verify-email?token=${verificationToken}&email=${user.email}' target='_blank'>HERE</a></p>`,
   });
 
   res
