@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "ts-node-dev --respawn --transpile-only app.ts",
-    "build": "tsc"
+    "start:prod": "node build/app.js",
+    "build": "pnpm install && tsc"
   },
   "keywords": [],
   "author": "",

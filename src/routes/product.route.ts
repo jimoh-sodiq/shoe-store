@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Router } from "express";
 import {
   createProduct,
   getAllProducts,
@@ -15,7 +15,7 @@ import {
 } from "../middleware/authentication.middleware";
 import upload from "../middleware/uploader.middleware";
 
-const router = express.Router();
+const router: Router = express.Router();
 
 router
   .route("/")

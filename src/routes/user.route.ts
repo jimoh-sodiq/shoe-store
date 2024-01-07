@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Router } from "express";
 import {
   showCurrentUser,
   getAllUsers,
@@ -11,7 +11,7 @@ import {
   authorizePermissions,
 } from "../middleware/authentication.middleware";
 
-const router = express.Router();
+const router: Router = express.Router();
 
 router.route("/show").get(authenticateUser, showCurrentUser);
 router

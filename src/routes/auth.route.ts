@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Router } from "express";
 import {
   register,
   login,
@@ -9,7 +9,7 @@ import {
 } from "../controllers/auth.controller";
 import { authenticateUser } from "../middleware/authentication.middleware";
 
-const router = express.Router();
+const router: Router = express.Router();
 
 router.route("/register").post(register);
 router.route("/verify-email").post(verifyEmail);
