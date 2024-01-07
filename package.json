@@ -2,7 +2,7 @@
   "name": "shoe-store-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "build/app.js",
   "scripts": {
     "start": "ts-node-dev --respawn --transpile-only app.ts",
     "start:prod": "node build/app.js",
