@@ -25,12 +25,19 @@ export async function register(req: Request, res: Response) {
   const verificationToken = crypto.randomBytes(40).toString("hex");
 
   const user = await User.create({ name, email, password, verificationToken });
+  console.log("user created");
 
   // TODO: create an actual link gotten from the frontend
+
+  const emailHtml =
+    process.env.NODE_ENV == "development"
+      ? `<p>Hello ${user.name}, please verify your email address by clicking this link <a href='http://localhost:3000/auth/verify-email?token=${verificationToken}&email=${user.email}' target='_blank'>HERE</a></p>`
+      : `<p>Hello ${user.name}, please verify your email address by clicking this link <a href='https://jshoes.netlify.app/auth/verify-email?token=${verificationToken}&email=${user.email}' target='_blank'>HERE</a></p>`;
+
   await sendEmail({
     to: user.email,
-    subject: "Shoe Store Email Verification",
-    html: `<p>Hello ${user.name}, please verify your email address by clicking this link <a href='https://jshoes.netlify.app/auth/verify-email?token=${verificationToken}&email=${user.email}' target='_blank'>HERE</a></p>`,
+    subject: "Shoe Store Email Verification link",
+    html: emailHtml,
   });
 
   res
@@ -78,7 +85,9 @@ export async function login(req: Request, res: Response) {
 
   const passwordMatches = await user.comparePassword(password);
   if (!passwordMatches) {
-    throw new CustomError.BadRequestError("Password is incorrect");
+    throw new CustomError.BadRequestError(
+      "Your Email or Password is incorrect"
+    );
   }
 
   if (!user.isVerified) {
@@ -152,10 +161,15 @@ export async function forgotPassword(req: Request, res: Response) {
     user.passwordTokenExpirationDate = passwordTokenExpirationDate;
     await user.save();
 
+    const emailHtml =
+      process.env.NODE_ENV == "development"
+        ? `<p>Hello ${user.name}, please reset your password by clicking this link <a href='http://localhost:3000/auth/reset-password/${user.passwordToken}?email=${user.email}' target='_blank'>"RESET PASSWORD LINK"</a> link is valid for 30mins</p>`
+        : `<p>Hello ${user.name}, please reset your password by clicking this link <a href='https://jshoes.netlify.app/auth/reset-password/${user.passwordToken}?email=${user.email}' target='_blank'>"RESET PASSWORD LINK"</a> link is valid for 30mins</p>`;
+
     await sendEmail({
       to: user.email,
-      subject: "Shoe Store Password Reset",
-      html: `<p>Hello ${user.name}, please reset your password by clicking this link <a>${user.passwordToken}</a></p>`,
+      subject: "Shoe Store Password Reset link",
+      html: emailHtml,
     });
   }
 

@@ -12,6 +12,7 @@ const globalConfig = {
   port: process.env.PORT,
   mongodb: {
     mongoUri: process.env.MONGO_URI,
+    mongoUriDev: process.env.MONGO_URI_DEV
   },
   nodemailer: {
     host: process.env.EMAIL_HOST,

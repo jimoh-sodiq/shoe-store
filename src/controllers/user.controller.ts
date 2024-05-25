@@ -17,7 +17,7 @@ export async function showCurrentUser(req: Request, res: Response) {
     .json(
       createResponse(
         true,
-        { user: (req as RequestWithUser).user },
+        (req as RequestWithUser).user,
         "user retrieved successfully"
       )
     );
